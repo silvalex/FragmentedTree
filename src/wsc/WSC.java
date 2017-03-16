@@ -25,14 +25,14 @@ public class WSC extends Problem implements SimpleProblemForm {
 		if (!ind.evaluated) {
 			WSCInitializer init = (WSCInitializer) state.initializer;
 			WSCIndividual tree = (WSCIndividual) ind;
-			
+
 			double cost = 0.0;
 			double availability = 1.0;
 			double reliability = 1.0;
-			
+
 			Map<String, Double> timeMap = new HashMap<String, Double>();
 	        double time = findLongestTime("end", tree, init, timeMap);
-			
+
 			for (String key : timeMap.keySet()) {
 			    if (!key.equals( "start" ) && !key.equals( "end" )) {
     			    double[] qos = init.serviceMap.get( key ).getQos();
@@ -41,14 +41,18 @@ public class WSC extends Problem implements SimpleProblemForm {
     			    reliability *= qos[WSCInitializer.RELIABILITY];
 			    }
 			}
-			
+
 			double fitness = calculateFitness(availability, reliability, time, cost, init);
+			tree.setAvailability(availability);
+			tree.setReliability(reliability);
+			tree.setTime(time);
+			tree.setCost(cost);
 
 			// the fitness better be SimpleFitness!
 			SimpleFitness f = ((SimpleFitness) ind.fitness);
 			f.setFitness(state, fitness, false);
 			ind.evaluated = true;
-			
+
 			// Find the unused fragments from the tree
 			Set<String> fragmentsToRemove = new HashSet<String>();
 			for (String s : tree.getPredecessorMap().keySet()) {
@@ -60,21 +64,21 @@ public class WSC extends Problem implements SimpleProblemForm {
 			    tree.getPredecessorMap().remove( s );
 		}
 	}
-	
+
 	private double findLongestTime(String select, WSCIndividual ind, WSCInitializer init, Map<String, Double> timeMap) {
 	    if (!timeMap.containsKey( select )) {
 	        double highestTime = 0.0;
-	        
+
 	        for(String child: ind.getPredecessorMap().get( select )) {
 	            double childValue;
 	            if (timeMap.containsKey( child ))
 	                childValue = timeMap.get( child );
 	            else
-	               childValue = findLongestTime(child, ind, init, timeMap);  
+	               childValue = findLongestTime(child, ind, init, timeMap);
                 if (childValue > highestTime)
                     highestTime = childValue;
 	        }
-	        
+
 	        double serviceTime = 0.0;
 	        if (!select.equals("start") && !select.equals("end"))
 	            serviceTime = init.serviceMap.get(select).getQos()[WSCInitializer.TIME];

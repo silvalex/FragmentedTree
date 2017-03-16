@@ -12,6 +12,10 @@ import ec.util.Parameter;
 
 public class WSCIndividual extends Individual {
 
+	private double availability;
+	private double reliability;
+	private double time;
+	private double cost;
 	private static final long serialVersionUID = 1L;
 	private Map<String, Set<String>> predecessorMap;
 
@@ -75,6 +79,42 @@ public class WSCIndividual extends Individual {
 		WSCIndividual wsci = new WSCIndividual(newMap);
 		wsci.fitness = (SimpleFitness) fitness.clone();
 		wsci.species = species;
+		wsci.setAvailability(availability);
+		wsci.setReliability(reliability);
+		wsci.setTime(time);
+		wsci.setCost(cost);
 		return wsci;
+	}
+
+	public void setAvailability(double availability) {
+		this.availability = availability;
+	}
+
+	public void setReliability(double reliability) {
+		this.reliability = reliability;
+	}
+
+	public void setTime(double time) {
+		this.time = time;
+	}
+
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
+
+	public double getAvailability() {
+		return availability;
+	}
+
+	public double getReliability() {
+		return reliability;
+	}
+
+	public double getTime() {
+		return time;
+	}
+
+	public double getCost() {
+		return cost;
 	}
 }
